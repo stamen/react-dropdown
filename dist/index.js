@@ -52,7 +52,7 @@ var Dropdown = function (_Component) {
   _createClass(Dropdown, [{
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(newProps) {
-      if (newProps.value && newProps.value !== this.state.selected) {
+      if (newProps.value && !this.isValueEqual(newProps)) {
         this.setState({ selected: newProps.value });
       } else if (newProps.placeholder) {
         this.setState({ selected: { label: newProps.placeholder, value: '' } });
@@ -68,6 +68,16 @@ var Dropdown = function (_Component) {
     value: function componentWillUnmount() {
       this.mounted = false;
       document.removeEventListener('click', this.handleDocumentClick, false);
+    }
+  }, {
+    key: 'isValueEqual',
+    value: function isValueEqual(props) {
+      if (!props.value) return false;
+
+      var prevValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.value;
+      var thisValue = typeof props.value === 'string' ? props.value : props.value.value;
+
+      return prevValue === thisValue;
     }
   }, {
     key: 'handleMouseDown',
@@ -105,10 +115,10 @@ var Dropdown = function (_Component) {
     value: function renderOption(option) {
       var _classNames;
 
-      var optionClass = (0, _classnames2.default)((_classNames = {}, _defineProperty(_classNames, this.props.baseClassName + '-option', true), _defineProperty(_classNames, 'is-selected', option === this.state.selected), _classNames));
-
       var value = option.value || option.label || option;
       var label = option.label || option.value || option;
+
+      var optionClass = (0, _classnames2.default)((_classNames = {}, _defineProperty(_classNames, this.props.baseClassName + '-option', true), _defineProperty(_classNames, 'is-selected', this.isValueEqual({ value: value })), _classNames));
 
       return _react2.default.createElement(
         'div',
