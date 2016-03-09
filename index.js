@@ -18,7 +18,7 @@ class Dropdown extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if (newProps.value && newProps.value !== this.state.selected) {
+    if (newProps.value && !this.isValueEqual(newProps)) {
       this.setState({selected: newProps.value})
     } else if (newProps.placeholder) {
       this.setState({selected: { label: newProps.placeholder, value: '' }})
@@ -32,6 +32,15 @@ class Dropdown extends Component {
   componentWillUnmount () {
     this.mounted = false
     document.removeEventListener('click', this.handleDocumentClick, false)
+  }
+
+  isValueEqual (props) {
+    if (!props.value) return false
+
+    const prevValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.value
+    const thisValue = typeof props.value === 'string' ? props.value : props.value.value
+
+    return prevValue === thisValue
   }
 
   handleMouseDown (event) {
@@ -63,13 +72,13 @@ class Dropdown extends Component {
   }
 
   renderOption (option) {
-    let optionClass = classNames({
-      [`${this.props.baseClassName}-option`]: true,
-      'is-selected': option === this.state.selected
-    })
-
     let value = option.value || option.label || option
     let label = option.label || option.value || option
+
+    let optionClass = classNames({
+      [`${this.props.baseClassName}-option`]: true,
+      'is-selected': this.isValueEqual({value})
+    })
 
     return (
       <div
