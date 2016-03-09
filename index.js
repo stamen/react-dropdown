@@ -18,8 +18,10 @@ class Dropdown extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if (newProps.value && !this.isValueEqual(newProps)) {
-      this.setState({selected: newProps.value})
+    if (newProps.value) {
+      if (!this.isValueEqual(newProps)) {
+        this.setState({selected: newProps.value})
+      }
     } else if (newProps.placeholder) {
       this.setState({selected: { label: newProps.placeholder, value: '' }})
     }
